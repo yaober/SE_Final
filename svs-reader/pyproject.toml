@@ -5,14 +5,14 @@ description = "A Napari plugin to read SVS files"
 readme = "README.md"
 license = {file = "LICENSE"}
 authors = [
-  {name = "svs-reader"},
+  {name = "Jia Yao"},
   {email = "ggmuyj@gmail.com"},
 ]
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
     "Framework :: napari",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: BSD License",
+    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
@@ -26,9 +26,6 @@ classifiers = [
 requires-python = ">=3.9"
 dependencies = [
     "numpy",
-    "magicgui",
-    "qtpy",
-    "scikit-image",
 ]
 
 [project.optional-dependencies]
@@ -36,9 +33,6 @@ testing = [
     "tox",
     "pytest",  # https://docs.pytest.org/en/latest/contents.html
     "pytest-cov",  # https://pytest-cov.readthedocs.io/en/latest/
-    "pytest-qt",  # https://pytest-qt.readthedocs.io/en/latest/
-    "napari",
-    "pyqt5",
 ]
 
 [project.entry-points."napari.manifest"]

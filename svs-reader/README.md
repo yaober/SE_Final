@@ -1,10 +1,10 @@
 # svs-reader
 
-[![License BSD-3](https://img.shields.io/pypi/l/svs-reader.svg?color=green)](https://github.com/yaber/svs-reader/raw/main/LICENSE)
+[![License MIT](https://img.shields.io/pypi/l/svs-reader.svg?color=green)](https://github.com/yaober/svs-reader/raw/main/LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/svs-reader.svg?color=green)](https://pypi.org/project/svs-reader)
 [![Python Version](https://img.shields.io/pypi/pyversions/svs-reader.svg?color=green)](https://python.org)
-[![tests](https://github.com/yaber/svs-reader/workflows/tests/badge.svg)](https://github.com/yaber/svs-reader/actions)
-[![codecov](https://codecov.io/gh/yaber/svs-reader/branch/main/graph/badge.svg)](https://codecov.io/gh/yaber/svs-reader)
+[![tests](https://github.com/yaober/svs-reader/workflows/tests/badge.svg)](https://github.com/yaober/svs-reader/actions)
+[![codecov](https://codecov.io/gh/yaober/svs-reader/branch/main/graph/badge.svg)](https://codecov.io/gh/yaober/svs-reader)
 [![napari hub](https://img.shields.io/endpoint?url=https://api.napari-hub.org/shields/svs-reader)](https://napari-hub.org/plugins/svs-reader)
 
 A Napari plugin to read SVS files
@@ -37,7 +37,7 @@ the coverage at least stays the same before you submit a pull request.
 
 ## License
 
-Distributed under the terms of the [BSD-3] license,
+Distributed under the terms of the [MIT] license,
 "svs-reader" is free and open source software
 
 ## Issues
