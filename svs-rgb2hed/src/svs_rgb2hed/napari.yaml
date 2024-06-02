@@ -1,0 +1,15 @@
+name: svs-rgb2hed
+display_name: svs-rgb2hed
+# use 'hidden' to remove plugin from napari hub search results
+visibility: public
+# see https://napari.org/stable/plugins/manifest.html for valid categories
+categories: ["Annotation", "Segmentation", "Acquisition"]
+contributions:
+  commands:
+    - id: svs-rgb2hed.get_reader
+      python_name: svs_rgb2hed._reader:napari_get_reader
+      title: Open data with FooBar Segmentation
+  readers:
+    - command: svs-rgb2hed.get_reader
+      accepts_directories: false
+      filename_patterns: ['*.svs']

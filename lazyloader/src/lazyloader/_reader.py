@@ -1,16 +1,95 @@
-"""
-This module is an example of a barebones numpy reader plugin for napari.
+import numpy as np
 
-It implements the Reader specification, but your plugin may choose to
-implement multiple readers or even other plugin contributions. see:
-https://napari.org/stable/plugins/guides.html?#readers
-"""
+def rgb2hed(rgb):
+    """
+    Convert an RGB image to HED color space.
+
+    Parameters
+    ----------
+    rgb : array
+        RGB image.
+
+    Returns
+    -------
+    hed : array
+        HED image.
+    """
+    # Stain separation matrix
+    # These values are hardcoded for convenience
+    rgb_from_hed = np.array([[0.650, 0.0722, 0], 
+                             [0.704, 0.990, 0], 
+                             [0.286, 0.105, 0]])
+    hed_from_rgb = np.linalg.inv(rgb_from_hed)
+
+    # Convert RGB to OD (Optical Density) space
+    rgb = rgb / 255.0
+    od = -np.log(rgb + 1e-6)
+
+    # Convert OD to HED
+    hed = np.dot(od, hed_from_rgb.T)
+
+    return hed
+
+
+import dask.array as da
+
+def dask_rgb2hed(rgb):
+    """
+    Convert an RGB image to HED color space using Dask.
+
+    Parameters
+    ----------
+    rgb : dask.array
+        RGB image.
+
+    Returns
+    -------
+    hed : dask.array
+        HED image.
+    """
+    rgb_from_hed = np.array([[0.650, 0.0722, 0], 
+                             [0.704, 0.990, 0], 
+                             [0.286, 0.105, 0]])
+    hed_from_rgb = np.linalg.inv(rgb_from_hed)
+
+    # Convert RGB to OD (Optical Density) space
+    rgb = rgb / 255.0
+    od = -da.log(rgb + 1e-6)
+
+    # Convert OD to HED
+    hed = da.tensordot(od, hed_from_rgb.T, axes=(-1, -1))
+
+    return hed
+
+def threshold_hed(hed, threshold=0.5):
+    """
+    Apply a threshold to the HED image to identify nuclei.
+
+    Parameters
+    ----------
+    hed : dask.array
+        HED image.
+    threshold : float
+        Threshold value.
+
+    Returns
+    -------
+    labels : dask.array
+        Binary image with 1 indicating nuclei.
+    """
+    h_channel = hed[:, :, 0]
+    labels = h_channel > threshold
+
+    return labels
 
 import numpy as np
 import openslide
 import dask
 import dask.array as da
 from openslide import deepzoom as dz
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 
 def napari_get_reader(path):
@@ -67,7 +146,23 @@ def read_svs_file(path):
         tile = zoom_gen.get_tile(level, (col, row))
         return np.array(tile).transpose((1, 0, 2))
 
+    def dask_rgb2hed(rgb):
+        rgb_from_hed = np.array([[0.650, 0.0722, 0], 
+                                 [0.704, 0.990, 0], 
+                                 [0.286, 0.105, 0]])
+        hed_from_rgb = np.linalg.inv(rgb_from_hed)
+        rgb = rgb / 255.0
+        od = -da.log(rgb + 1e-6)
+        hed = da.tensordot(od, hed_from_rgb.T, axes=(-1, -1))
+        return hed
+
+    def threshold_hed(hed, threshold=0.5):
+        h_channel = hed[:, :, 0]
+        labels = h_channel > threshold
+        return labels
+
     pyramid = []
+    label_pyramid = []
 
     for level in reversed(range(num_levels)):
         level_dims = zoom_gen.level_dimensions[level]
@@ -104,10 +199,24 @@ def read_svs_file(path):
 
         pyramid.append(level_data)
 
+        if level == num_levels - 1:
+            hed = dask_rgb2hed(level_data)
+            labels = threshold_hed(hed)
+            label_pyramid.append(labels)
+        else:
+            label_pyramid.append(da.zeros_like(level_data[:, :, 0], dtype=bool))
+
     add_kwargs = {
         "multiscale": True,
         "contrast_limits": [0, 255],
     }
     layer_type = "image"
 
-    return [(pyramid, add_kwargs, layer_type)]
+    label_kwargs = {
+        "multiscale": True,
+        "color": "red",
+        "name": "Nuclei Labels",
+    }
+    label_type = "labels"
+
+    return [(pyramid, add_kwargs, layer_type), (label_pyramid, label_kwargs, label_type)]
