@@ -81,7 +81,7 @@ def reader_function(path):
     def get_tile(level, column, row):
         tile = gen.get_tile(level, (column, row))
         return np.array(tile).transpose((1, 0, 2))
-
+    #new delay function to get the mask
     @dask.delayed(pure=True)
     def get_tile_hed(level, column, row, num_levels, threshold=0.05):
         tile = np.array(gen.get_tile(level, (column, row))).transpose(
