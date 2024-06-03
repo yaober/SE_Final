@@ -1,0 +1,15 @@
+name: nucleus-segemenataion
+display_name: nulceus-segmentation
+# use 'hidden' to remove plugin from napari hub search results
+visibility: public
+# see https://napari.org/stable/plugins/manifest.html for valid categories
+categories: ["Annotation", "Segmentation", "Acquisition"]
+contributions:
+  commands:
+    - id: nucleus-segemenataion.get_reader
+      python_name: nucleus_segemenataion._reader:napari_get_reader
+      title: Open data with nulceus-segmentation
+  readers:
+    - command: nucleus-segemenataion.get_reader
+      accepts_directories: false
+      filename_patterns: ['*.svs']
